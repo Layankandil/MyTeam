@@ -1,0 +1,213 @@
+CREATE TABLE Users (
+  	User_ID number(5,0) ,
+ 	FirstName VarChar2(13) NOT NULL,
+    LastName VarChar2(20),
+    Email VarChar2(35) NOT NULL CHECK (Email LIKE '%@%.%'),
+    Biography VarChar2(200),
+    User_Type char(1) NOT NULL CHECK (User_Type IN ('E','U')),
+    CONSTRAINT user_pk PRIMARY KEY (User_ID));
+
+CREATE TABLE Experts (
+    Expert_ID NUMBER(5,0),
+    Qualification VARCHAR2(13) NOT NULL CHECK (Qualification IN ('Masters', 'Doctorate', 'Bachelors', 'Undergraduate', 'Diploma')),
+    Graduation_Year number(4) NOT NULL check (Graduation_Year between 1974 and 2024),
+    place_of_Training VARCHAR2(35),
+    CONSTRAINT exp_pk PRIMARY KEY (Expert_ID),
+    CONSTRAINT exp_fk FOREIGN KEY (Expert_ID) REFERENCES Users(User_ID));
+
+CREATE TABLE Request (
+    Request# INTEGER GENERATED ALWAYS AS IDENTITY (
+    	START WITH 1 
+        INCREMENT BY 1), 
+    User_ID number(5,0) NOT NULL,
+    Expert_ID number(5,0) NOT NULL,
+    Request_Status Varchar2(8) NOT NULL CHECK (Request_Status IN ('Pending','Approved','Done','Declined')),
+    Date_created date default sysdate,
+    CONSTRAINT req_pk PRIMARY KEY (Request#),
+    CONSTRAINT reqUser_fk FOREIGN KEY (User_ID) REFERENCES Users(User_ID),
+    CONSTRAINT reqExp_fk FOREIGN KEY (Expert_ID) REFERENCES Experts(Expert_ID));
+
+CREATE TABLE Skill_Category(
+  	Category_code Varchar2(4),
+    Category_Name varchar2(35) NOT NULL, 
+    CONSTRAINT Catg_pk PRIMARY KEY (Category_code));
+
+CREATE TABLE Skills(
+    Skill# INTEGER GENERATED ALWAYS AS IDENTITY (
+    	START WITH 1 
+        INCREMENT BY 1),
+    Skill_Name varchar2(25) NOT NULL ,
+    Skill_Level varchar2(6) NOT NULL CHECK (Skill_Level IN ('EASY','MEDIUM','HARD')), 
+    Category_Code Varchar2(4) NOT NULL,
+    CONSTRAINT skill_pk PRIMARY KEY (Skill#),
+    CONSTRAINT skill_fk FOREIGN KEY (Category_Code) REFERENCES Skill_Category(Category_code));
+
+CREATE TABLE Expertise(
+    Expert_ID number(5,0) NOT NULL REFERENCES Experts(Expert_ID),
+    Skill# INTEGER NOT NULL REFERENCES Skills(Skill#),
+    No_of_Projects_Completed INTEGER NOT NULL,
+	CONSTRAINT Expertise_pk PRIMARY KEY (Expert_ID , Skill#));
+
+
+INSERT INTO USERS values (1024, 'Layan' , 'Kandil' , '2210192@uj.edu.sa','a Student at UOJ, looking for ways to develop in cyber security.', 'U');
+INSERT INTO USERS values (1080, 'Sara' , 'Alharbi' , 'saraH21@gmail.com','Sara alharbi, cybersecurity red team with 8 years experience 
+    looking forward to help you develop and reach your cyber dream', 'E');
+INSERT INTO USERS values (1029, 'Dema' , 'Alshehri' , '2211090@uj.edu.sa','a Student at UOJ, aspire to develop myself and expand my expertise in the field 
+of CHFI', 'U');
+INSERT INTO USERS values (1030, 'Lamar' , 'Alsaad' , 'LamarSaad@Gmail.com','Data Science Student at UOJ, I want to enhance my skills in machine learning"', 'U');
+INSERT INTO USERS values (1000,'hnouf','Alharbi','2212908@uj.edu.sa','AI Robotics Engineer Experienced in utilizing software and
+    computer-based systems for designing robots','E');
+INSERT INTO USERS values(1111,'Leen','Alotaipi','leen22@gmail.com,','a Student at UOJ, looking for ways to learn in AI ','U');
+INSERT INTO USERS (User_ID , FirstName , LastName , Email , User_Type) values (10973, 'Renad' , 'Alghamdi' , 'ren11@gmail.com', 'E');
+INSERT INTO USERS values (1010, 'Yara' , 'Alamri' , '2210362@uj.edu.sa','a Student at UOJ, I would like to develop my self in software engineering.', 'U');
+INSERT INTO USERS values (10365, 'Joud' , 'Baqays' , 'JoudBaqays@gmail.com','Joud Baqays, Expert in python programming.', 'E');
+INSERT INTO USERS (User_ID , FirstName , LastName , Email , User_Type) values (12031, 'mona' , 'shahrani' , 'monash@hotmail.com', 'E');
+
+
+INSERT INTO EXPERTS (Expert_ID, Qualification , Graduation_Year) values (1080 , 'Masters', 2013);
+INSERT INTO EXPERTS values (10973 , 'Masters', 2020 ,'SABIC');
+INSERT INTO EXPERTS values (1000 , 'Doctorate', 2020 ,'SDAIA');
+INSERT INTO EXPERTS values (10365 , 'Bachelors', 2022 , 'Stc');
+INSERT INTO EXPERTS values (12031 , 'Diploma', 2017 , 'SNB Bank');
+
+
+INSERT INTO REQUEST (User_ID, Expert_ID, Request_Status ) values (1024, 1080 , 'Approved');
+INSERT INTO REQUEST (User_ID, Expert_ID, Request_Status ) values (1030, 10973 , 'Pending');
+INSERT INTO REQUEST (User_ID, Expert_ID, Request_Status ) values(1111,1000,'Pending');
+INSERT INTO REQUEST (User_ID, Expert_ID, Request_Status ) values (1010, 10365 , 'Approved');
+INSERT INTO REQUEST (User_ID, Expert_ID, Request_Status ) values (1029, 10973 , 'Declined');
+INSERT INTO REQUEST (User_ID, Expert_ID, Request_Status ) values(1111,12031,'Done');
+
+
+INSERT INTO Skill_Category values ('CSEC' , 'Cyber Security');
+INSERT INTO Skill_Category values ('CP10' , 'Computer Programming');
+INSERT INTO Skill_Category values ('CHFI' , 'CHFI Certification');
+INSERT INTO Skill_Category values ('DS' , 'Machine Learning ');
+INSERT INTO Skill_Category values ('AI' ,'Artificial intellegence');
+INSERT INTO Skill_Category values ('SWE' , 'software engineering');
+INSERT INTO Skill_Category values ('IT' , 'information technology');
+
+
+INSERT INTO Skills (Skill_Name, Skill_Level, Category_Code) values ('Java programming', 'MEDIUM', 'CP10');
+INSERT INTO Skills (Skill_Name, Skill_Level, Category_Code) values ('Red team attacking', 'MEDIUM', 'CSEC');
+INSERT INTO Skills (Skill_Name, Skill_Level, Category_Code) values ('cyber analysis', 'HARD', 'CSEC');
+INSERT INTO Skills (Skill_Name, Skill_Level, Category_Code) values ('CHFI Certification ', 'HARD', 'CHFI');
+INSERT INTO Skills (Skill_Name, Skill_Level, Category_Code) values ('Data analysis', 'MEDIUM', 'DS');
+INSERT INTO Skills (Skill_Name, Skill_Level, Category_Code) values ('image processing', 'MEDIUM', 'AI');
+INSERT INTO Skills (Skill_Name, Skill_Level, Category_Code) values (' UI/UX Design ', 'EASY', 'SWE');
+INSERT INTO Skills (Skill_Name, Skill_Level, Category_Code) values ('Robotics Engineering', 'MEDIUM', 'AI');
+INSERT INTO Skills (Skill_Name, Skill_Level, Category_Code) values ('python programming', 'MEDIUM', 'SWE');
+INSERT INTO Skills (Skill_Name, Skill_Level, Category_Code) values ('IT service management', 'HARD', 'IT');
+
+
+INSERT INTO Expertise values (1080, 1 , 12);
+INSERT INTO Expertise values (1080, 2 , 36);
+INSERT INTO Expertise values (1080, 3 , 24);
+INSERT INTO Expertise values (10973, 4 , 16);
+INSERT INTO Expertise values (1000, 5 , 32);
+INSERT INTO Expertise values (10973, 6, 11);
+INSERT INTO Expertise values (10973, 7 , 26 );
+INSERT INTO Expertise values (1000, 8, 10);
+INSERT INTO Expertise values (10365, 9 , 15);
+INSERT INTO Expertise values (12031, 10, 42);
+
+
+select FirstName , lastName , Qualification , skill_name as skill , No_of_Projects_Completed 
+from Users inner Join Experts on User_id = Expert_id 
+    inner Join Expertise on  Experts.Expert_id = Expertise.Expert_id 
+    inner join skills on skills.Skill# = Expertise.Skill# 
+    order by FirstName;
+
+Select (FirstName || ' ' || LastName) As FullName , sum(No_Of_projects_completed) as total_projects 
+From Users inner join Experts on User_id = Expert_id inner join  Expertise on Experts.Expert_id = Expertise.Expert_id 
+Group By FirstName,  LastName;
+
+Select (u.FirstName || ' ' || u.LastName) As User_name,
+	(exp.FirstName || ' ' || exp.LastName) As Expert_name, Request_Status 
+    From Request inner join Users u on Request.User_ID = u.User_ID
+    inner join Experts on Request.Expert_ID = Experts.Expert_ID
+    inner join Users exp ON Experts.Expert_ID = exp.User_ID
+    order by Request_Status;
+
+Select Distinct Skill_Name ,Skill_Level from Skills order by  Skill_Level ;
+
+SELECT Request_Status, COUNT(Request#) AS Request_Count
+FROM REQUEST
+GROUP BY Request_Status;
+
+Select (FirstName || ' ' || LastName) As Expert_Name
+From Users Where User_ID IN ( Select Expert_ID from Request );
+
+Select (FirstName || ' ' || LastName) As User_Name , COUNT(Request#) AS Request_Count
+From Users join Request ON users.user_ID =  Request.User_ID 
+Where user_type = 'U'
+Group By FirstName , LastName;
+
+Select Max(sum(NO_OF_PROJECTS_COMPLETED)) AS Experts_maximum_projects, 
+    Min(sum(NO_OF_PROJECTS_COMPLETED)) AS Experts_minimum_projects
+    from expertise  
+    Group by Expert_ID;
+
+SELECT E.Expert_ID, E.Qualification, E.Graduation_Year, S.Skill_name , ES.No_of_Projects_Completed 
+FROM EXPERTS E
+JOIN Expertise ES ON E.Expert_ID = ES.Expert_ID
+JOIN Skills S ON S.Skill# = ES.Skill#
+where ES.Skill# IN (Select Skill# From Skills where Category_Code = 'CSEC')
+ORDER BY E.Graduation_Year ;
+    
+CREATE OR REPLACE PROCEDURE UpdateRqeStat(RequestNum IN REQUEST.Request#%Type, Status IN REQUEST.Request_Status%Type) AS
+BEGIN 
+UPDATE REQUEST SET Request_Status = Status WHERE RequestNum = Request#; 
+dbms_output.put_line('Request status for request number ' || RequestNum || ' has been updated.');
+END;
+
+CREATE OR REPLACE PROCEDURE UpdateBiography(ID IN Users.User_ID%Type, newBio IN Users.Biography%Type) AS
+BEGIN 
+UPDATE Users SET Biography = newBio WHERE ID = User_ID; 
+dbms_output.put_line('Biography for user ' || ID || ' has been updated.');
+END;
+
+call UpdateRqeStat(1, 'Done');
+call UpdateBiography (10973 , 'For Further assistant you can contact me via email : ren11@gmail.com');
+
+CREATE OR REPLACE PROCEDURE usertype(ID IN users.User_ID%TYPE) AS 
+ fstName users.FIRSTNAME%TYPE;
+ LstName users.LastName%TYPE;
+ UserType users.User_Type%TYPE;
+BEGIN 
+ SELECT FIRSTNAME , LASTNAME, User_Type
+ INTO fstName, LstName , UserType
+ FROM users WHERE User_ID = ID;
+
+ if (UserType = 'U') Then 
+     dbms_output.put_line(fstName || ' ' || LstName || ' is a simple user.');
+ ELSE 
+     dbms_output.put_line(fstName || ' ' || LstName || ' is an Expert user.');
+ End if;
+END;
+
+call usertype(1024);
+
+CREATE OR REPLACE PROCEDURE projectsCheck (projectsNum Number) AS
+    CURSOR projects IS 
+    Select (FirstName || ' ' || LastName) As FullName , sum(No_Of_projects_completed) as total_projects 
+	From Users inner join Experts on User_id = Expert_id inner join  Expertise on Experts.Expert_id = Expertise.Expert_id 
+    where No_of_Projects_Completed >= projectsNum
+	Group By FirstName,  LastName;
+Begin
+    For print IN projects LOOP
+    	dbms_output.put_line('The Expert ' || print.FullName || ' Finished ' || print.total_projects || ' Projects ' );
+	End LOOP;
+End projectsCheck;
+EXECUTE  projectsCheck (20);
+
+CREATE OR REPLACE PROCEDURE AddNewUser (U_ID users.User_ID%TYPE ,U_firstName users.FIRSTNAME%TYPE, U_LastName users.LastName%TYPE,
+    U_Type users.User_Type%TYPE, U_Email users.Email%TYPE ) AS
+    Begin
+    INSERT INTO USERS (User_ID , FirstName , LastName , Email , User_Type) 
+    VALUES (U_ID, U_firstName , U_LastName , U_Email ,  U_Type);
+End AddNewUser;
+
+call usertype(1024);
+
+EXECUTE AddNewUser (11034 , 'Tala' ,'Alamri' , 'U' , 'TalaAlamri@gmail.com');
