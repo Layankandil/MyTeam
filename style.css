@@ -55,7 +55,7 @@ a {
 /* Hover Effect for Links */
 a:hover {
     text-decoration: underline; 
-    color: #2600ff; /* Yellow for hover effect */
+    color: #ffd500; /* Yellow for hover effect */
 }
 
 section {
